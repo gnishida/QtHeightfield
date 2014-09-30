@@ -10,7 +10,7 @@ public:
 
 	GLuint textureId() { return _textureId; }
 	void update(float t);
-	void draw(float t);
+	void draw(float t, int type);
 	int loadShader(char* filename, std::string& text);
 
 public:
@@ -19,6 +19,7 @@ public:
 	int _initialized;		// if the cells are initialized (=1) or not (=0)
 
 	GLuint _mvpMatrixLoc;
+	GLuint _typeLoc;
 	GLuint _tLoc;
     GLuint _texUnitLoc;
 	GLuint _centerLoc;

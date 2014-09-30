@@ -54,6 +54,7 @@ WaterSimulator::WaterSimulator(int w, int h) : _initialized(0), _width(w), _heig
 
     // Get location of the uniform variables
     _mvpMatrixLoc = glGetUniformLocation(_programId, "mvpMatrix");
+    _typeLoc = glGetUniformLocation(_programId, "type");
     _texUnitLoc = glGetUniformLocation(_programId, "texUnit");
 	_tLoc = glGetUniformLocation(_programId, "t");
 	_centerLoc = glGetUniformLocation(_programId, "center");
@@ -63,7 +64,7 @@ WaterSimulator::WaterSimulator(int w, int h) : _initialized(0), _width(w), _heig
 	_lightDirLoc = glGetUniformLocation(_programId, "lightDir");
 }
 
-void WaterSimulator::draw(float t)
+void WaterSimulator::draw(float t, int type)
 {
 	glUseProgram(_programId);
 
@@ -71,9 +72,10 @@ void WaterSimulator::draw(float t)
     glUniform1i(_texUnitLoc, 0);
 	float center[] = {-0.2, -0.2, 0.3, 0.2, -0.1, 0.4};
 	float frequency[] = {200.0, 160.0, 100.0};
-	float amplitude[] = {0.0025, 0.0025, 0.0025};
+	float amplitude[] = {0.0015, 0.00125, 0.0015};
 	float lightDir[] = {0.0, 0.0, 1.0};
-	float island[] = {0.5, 0.5};
+	float island[] = {0.0, 0.0};
+	glUniform1i(_typeLoc, type);
 	glUniform2fv(_centerLoc, 3, center);
 	glUniform1fv(_frequencyLoc, 3, frequency);
 	glUniform1fv(_amplitudeLoc, 3, amplitude);

@@ -34,13 +34,14 @@ private:
 
 	Camera camera;
 	vector<Vertex> vertices;
+	vector<Vertex> vertices2;
 
 	QBasicTimer timer;
 	WaterSimulator* sim;
 	int time;
 
-	GLuint vao;
-	GLuint vbo;
+	GLuint vao[2];
+	GLuint vbo[2];
 	GLuint verticesBuf;
 };
 
