@@ -54,6 +54,8 @@ void GLWidget3D::initializeGL()
 
 	//loadOBJ("models/cube.obj");
 	createDenseMesh();
+
+	initVAO();
 }
 
 void GLWidget3D::timerEvent(QTimerEvent *e)
@@ -87,26 +89,20 @@ void GLWidget3D::resizeGL(int width, int height)
 void GLWidget3D::paintGL()
 {
 	sim->draw((float)time * 0.1);
-	//sim->update((float)time * 0.01);
 	time++;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0.0, 0.0, -camera.z);
-	glMultMatrixd(camera.rt);
-
-	for (int i = 0; i < vertices.size(); i += 3) {
-		glBegin(GL_TRIANGLES);
-		for (int j = 0; j < 3; ++j) {
-			glTexCoord2f(vertices[i + j].texCoord[0], vertices[i + j].texCoord[1]);
-			glNormal3f(vertices[i + j].normal[0], vertices[i + j].normal[1], vertices[i + j].normal[2]);
-			glVertex3f(vertices[i + j].position[0], vertices[i + j].position[1], vertices[i + j].position[2]);
-		}
-		glEnd();
+	// set model view projection matrix
+	float mvpMatrixArray[16];
+	for(int i=0;i<16;i++){
+		mvpMatrixArray[i]=camera.mvpMatrix.data()[i];
 	}
-	glDisable(GL_TEXTURE_2D);
+
+	glUniformMatrix4fv(sim->_mvpMatrixLoc, 1, false, (float*)&mvpMatrixArray[0]);
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+
 	glUseProgram(0);
 }
 
@@ -141,4 +137,23 @@ void GLWidget3D::createDenseMesh()
 			vertices.push_back(Vertex(Vector3f(x1, y2, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
 		}
 	}
+}
+
+void GLWidget3D::initVAO()
+{
+	// Setup vertex array object
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+
+	
 }

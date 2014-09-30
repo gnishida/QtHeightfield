@@ -31,12 +31,18 @@ Camera::Camera()
 	tq[3] = 0;
 
 	z = 2.0;
+
+	xrot = yrot = zrot = 0.0;
+	
+	update();
 }
 
 void Camera::setWindowSize(int w, int h)
 {
 	this->w = w;
 	this->h = h;
+
+	update();
 }
 
 void Camera::mouseDown(int cx, int cy)
@@ -50,15 +56,13 @@ void Camera::rotate(int x, int y)
 	double dx = (x - cx) / (double)w;
 	double dy = (y - cy) / (double)h;
 
-	double a = sqrt(dx * dx + dy * dy);
-	if (a > 0) {
-		double ar = a * 2.0 * 3.14159265 * 0.5;
-		double as = sin(ar) / a;
-		double dq[4] = { cos(ar), dy * as, dx * as, 0.0 };
+	yrot += 360.0 * dx;
+	xrot += 360.0 * dy;
 
-		qmul(tq, dq, cq);
-		qrot(rt, tq);
-	}
+	update();
+
+	cx = x;
+	cy = y;
 }
 
 void Camera::zoom(int x, int y)
@@ -67,6 +71,8 @@ void Camera::zoom(int x, int y)
 	cy = y;
 
 	z -= dy;
+
+	update();
 }
 
 void Camera::mouseUp()
@@ -107,4 +113,36 @@ void Camera::qrot(double r[], double q[])
 	r[10] = 1.0 - x2 - y2;
 	r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
 	r[15] = 1.0;
+}
+
+void Camera::update()
+{
+	float fovy = 60.0f;
+
+		float aspect=(float)w/(float)h;
+		float zfar=100.0f;//90000.0f;
+		float znear=0.1f;
+
+		float f = 1.0f / tan (fovy * (0.00872664625f));//PI/360
+
+		double m[16]=
+		{	 f/aspect,	0,								0,									0,
+					0,	f,								0,						 			0,
+			        0,	0,		(zfar+znear)/(znear-zfar),		(2.0f*zfar*znear)/(znear-zfar),
+			        0,	0,		    				   -1,									0
+
+		};
+		QMatrix4x4 pMatrix=QMatrix4x4(m);
+
+
+		QMatrix4x4 mvMatrix;
+
+		mvMatrix.setToIdentity();
+		mvMatrix.translate(0, 0, -z);
+		mvMatrix.rotate(xrot, 1.0, 0.0, 0.0);		
+		mvMatrix.rotate(yrot, 0.0, 1.0, 0.0);
+		//mvMatrix.rotate(zrot, 0.0, 0.0, 1.0);
+
+		// mvp
+		mvpMatrix=pMatrix*mvMatrix;
 }

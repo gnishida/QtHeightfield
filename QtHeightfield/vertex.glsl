@@ -1,5 +1,12 @@
-varying vec3 fragmentNormal;
+#version 330
 
+layout(location = 0)in vec3 vertex;
+layout(location = 1)in vec3 color;
+
+out vec3 fragmentNormal;
+out vec3 varColor;
+
+uniform mat4 mvpMatrix;
 uniform vec2 center[3];
 uniform float frequency[3];
 uniform float amplitude[3];
@@ -10,12 +17,12 @@ uniform sampler2D texUnit;
 
 void main(void)
 {
-	fragmentNormal = gl_Normal;
+	varColor = color;
 
 	float height = 0.0;
 	vec3 n = vec3(0, 0, 1);
 
-	vec4 pos = gl_Vertex;
+	vec4 pos = vec4(vertex, 1);//gl_Vertex;
 
 	for (int i = 0; i < 3; ++i) {
 		float dx = abs(pos.x - center[i].x);
@@ -32,6 +39,6 @@ void main(void)
 
 	fragmentNormal = n;
 
-	gl_Position = gl_ModelViewProjectionMatrix * pos;
+	gl_Position = mvpMatrix * pos;
 
 }  

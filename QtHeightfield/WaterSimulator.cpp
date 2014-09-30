@@ -53,6 +53,7 @@ WaterSimulator::WaterSimulator(int w, int h) : _initialized(0), _width(w), _heig
 	}
 
     // Get location of the uniform variables
+    _mvpMatrixLoc = glGetUniformLocation(_programId, "mvpMatrix");
     _texUnitLoc = glGetUniformLocation(_programId, "texUnit");
 	_tLoc = glGetUniformLocation(_programId, "t");
 	_centerLoc = glGetUniformLocation(_programId, "center");

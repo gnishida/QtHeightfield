@@ -18,6 +18,7 @@ class GLWidget3D : public QGLWidget
 public:
 	void loadOBJ(const char* filename);
 	void createDenseMesh();
+	void initVAO();
 
 protected:
 	void initializeGL();
@@ -37,5 +38,9 @@ private:
 	QBasicTimer timer;
 	WaterSimulator* sim;
 	int time;
+
+	GLuint vao;
+	GLuint vbo;
+	GLuint verticesBuf;
 };
 

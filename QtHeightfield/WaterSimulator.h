@@ -18,6 +18,7 @@ public:
 	int _height;			// height of the screen
 	int _initialized;		// if the cells are initialized (=1) or not (=0)
 
+	GLuint _mvpMatrixLoc;
 	GLuint _tLoc;
     GLuint _texUnitLoc;
 	GLuint _centerLoc;
