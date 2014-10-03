@@ -5,6 +5,7 @@ layout(location = 1)in vec3 color;
 
 out vec3 fragmentNormal;
 out vec3 varColor;
+out vec3 cameraDir;
 
 uniform mat4 mvpMatrix;
 uniform int type;
@@ -14,6 +15,7 @@ uniform float amplitude[3];
 uniform vec2 island;
 uniform vec3 lightDir;
 uniform float t;
+uniform vec3 cameraPos;
 uniform sampler2D texUnit;
 
 void createSea()
@@ -39,6 +41,7 @@ void createSea()
 	pos.z = height;
 
 	fragmentNormal = n;
+	cameraDir = cameraPos - pos.xyz;
 
 	gl_Position = mvpMatrix * pos;
 }
@@ -58,6 +61,7 @@ void createIsland()
 	n.y = -sqrt(dot(land_dist, land_dist)) / sigma / sigma * land_height * (vertex.xy - island).y * 10;
 	
 	fragmentNormal = n;
+	cameraDir = cameraPos - pos.xyz;
 
 	gl_Position = mvpMatrix * pos;
 }

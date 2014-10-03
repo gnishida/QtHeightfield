@@ -27,6 +27,7 @@ public:
 	GLuint _amplitudeLoc;
 	GLuint _islandLoc;
 	GLuint _lightDirLoc;
+	GLuint _cameraPosLoc;
     
     GLuint _textureId;		// The texture ID used to store data array
     GLuint _programId;		// the program ID
