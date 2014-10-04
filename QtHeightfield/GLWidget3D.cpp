@@ -144,11 +144,11 @@ void GLWidget3D::createDenseMesh()
 		}
 	}
 
-	for (int i = N * 0.2; i < N * 0.8; ++i) {
+	for (int i = 0; i < N; ++i) {
 		float y1 = i / (float)N - 0.5f;
 		float y2 = (i + 1) / (float)N - 0.5f;
 
-		for (int j = N * 0.2; j < N * 0.8; ++j) {
+		for (int j = 0; j < N; ++j) {
 			float x1 = j / (float)N - 0.5f;
 			float x2 = (j + 1) / (float)N - 0.5f;
 

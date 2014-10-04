@@ -72,8 +72,8 @@ void WaterSimulator::draw(float t, int type)
     // Set the uniform variables
     glUniform1i(_texUnitLoc, 0);
 	float center[] = {-0.2, -0.2, 0.3, 0.2, -0.1, 0.4};
-	float frequency[] = {200.0, 160.0, 100.0};
-	float amplitude[] = {0.0015, 0.00125, 0.0015};
+	float frequency[] = {250.0, 200.0, 160.0};
+	float amplitude[] = {0.0007, 0.0007, 0.0007};
 	float lightDir[] = {0.0, 0.0, 1.0};
 	float island[] = {0.0, 0.0};
 	float cameraPos[] = {0.0, -1.0, 1.0};

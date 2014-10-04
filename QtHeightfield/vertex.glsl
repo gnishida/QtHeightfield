@@ -53,12 +53,12 @@ void createIsland()
 	vec3 n = vec3(0, 0, 1);
 
 	vec2 land_dist = vertex.xy - island;
-	float sigma = 0.3;
-	float land_height = 0.3 * exp(-dot(land_dist, land_dist) * 0.5 / sigma / sigma);
-	pos.z = land_height - 0.22;
+	float sigma = 0.1;
+	float land_height = 0.1 * exp(-dot(land_dist, land_dist) * 0.5 / sigma / sigma);
+	pos.z = land_height - 0.015;
 
-	n.x = -sqrt(dot(land_dist, land_dist)) / sigma / sigma * land_height * (vertex.xy - island).x * 10;
-	n.y = -sqrt(dot(land_dist, land_dist)) / sigma / sigma * land_height * (vertex.xy - island).y * 10;
+	n.x = -sqrt(dot(land_dist, land_dist)) / sigma / sigma * land_height * (vertex.xy - island).x * 20;
+	n.y = -sqrt(dot(land_dist, land_dist)) / sigma / sigma * land_height * (vertex.xy - island).y * 20;
 	
 	fragmentNormal = n;
 	cameraDir = cameraPos - pos.xyz;
