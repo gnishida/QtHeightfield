@@ -45,6 +45,8 @@ void GLWidget3D::initializeGL()
     glewInit();
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Create the gpgpu object
     sim = new WaterSimulator(512, 512);
@@ -96,15 +98,17 @@ void GLWidget3D::paintGL()
 		mvpMatrixArray[i]=camera.mvpMatrix.data()[i];
 	}
 
-	glBindVertexArray(vao[0]);
-	sim->draw((float)time * 0.1, 0);
-	glUniformMatrix4fv(sim->_mvpMatrixLoc, 1, false, (float*)&mvpMatrixArray[0]);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
+	// draw island
 	glBindVertexArray(vao[1]);
-	sim->draw((float)time * 0.1, 1);
+	sim->update((float)time * 0.1, 1);
 	glUniformMatrix4fv(sim->_mvpMatrixLoc, 1, false, (float*)&mvpMatrixArray[0]);
 	glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
+
+	// draw wave
+	glBindVertexArray(vao[0]);
+	sim->update((float)time * 0.1, 0);
+	glUniformMatrix4fv(sim->_mvpMatrixLoc, 1, false, (float*)&mvpMatrixArray[0]);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
 	glUseProgram(0);
 
@@ -126,6 +130,7 @@ void GLWidget3D::createDenseMesh()
 
 	int N = 300;
 
+	// create mesh for the sea
 	for (int i = 0; i < N; ++i) {
 		float y1 = i / (float)N - 0.5f;
 		float y2 = (i + 1) / (float)N - 0.5f;
@@ -134,16 +139,17 @@ void GLWidget3D::createDenseMesh()
 			float x1 = j / (float)N - 0.5f;
 			float x2 = (j + 1) / (float)N - 0.5f;
 
-			vertices.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices.push_back(Vertex(Vector3f(x2, y1, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x2, y1, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
 
-			vertices.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices.push_back(Vertex(Vector3f(x1, y2, 0.0f), Vector3f(0, 0, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices.push_back(Vertex(Vector3f(x1, y2, 0.0f), Vector3f(0.2, 0.2, 1), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
 		}
 	}
 
+	// create mesh for the island
 	for (int i = 0; i < N; ++i) {
 		float y1 = i / (float)N - 0.5f;
 		float y2 = (i + 1) / (float)N - 0.5f;
@@ -152,13 +158,13 @@ void GLWidget3D::createDenseMesh()
 			float x1 = j / (float)N - 0.5f;
 			float x2 = (j + 1) / (float)N - 0.5f;
 
-			vertices2.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices2.push_back(Vertex(Vector3f(x2, y1, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices2.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x2, y1, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
 
-			vertices2.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices2.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
-			vertices2.push_back(Vertex(Vector3f(x1, y2, 0.0f), Vector3f(0, 1, 0), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x1, y1, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x2, y2, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
+			vertices2.push_back(Vertex(Vector3f(x1, y2, 0.0f), Vector3f(0.2, 0.8, 0.2), Vector3f(0, 0, 1), Vector3f(1, 0, 0)));
 		}
 	}
 }
@@ -169,7 +175,7 @@ void GLWidget3D::initVAO()
 	glGenVertexArrays(2, vao);
 	glGenBuffers(2, vbo);
 
-	// setup the vertices
+	// setup the vertices for the sea
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
@@ -179,7 +185,7 @@ void GLWidget3D::initVAO()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 
-	// setup the vertices2
+	// setup the vertices for the island
 	glBindVertexArray(vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices2.size(), vertices2.data(), GL_STATIC_DRAW);

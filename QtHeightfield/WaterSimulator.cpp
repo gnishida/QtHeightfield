@@ -65,7 +65,7 @@ WaterSimulator::WaterSimulator(int w, int h) : _initialized(0), _width(w), _heig
 	_cameraPosLoc = glGetUniformLocation(_programId, "cameraPos");
 }
 
-void WaterSimulator::draw(float t, int type)
+void WaterSimulator::update(float t, int type)
 {
 	glUseProgram(_programId);
 
@@ -75,14 +75,14 @@ void WaterSimulator::draw(float t, int type)
 	float frequency[] = {250.0, 200.0, 160.0};
 	float amplitude[] = {0.0007, 0.0007, 0.0007};
 	float lightDir[] = {0.0, 0.0, 1.0};
-	float island[] = {0.0, 0.0};
-	float cameraPos[] = {0.0, -1.0, 1.0};
+	float island[] = {-0.1, -0.2, 0.3, 0.1};
+	float cameraPos[] = {0.0, -1.0, 1.0}; // I should change the camera pos, but ...
 	glUniform1i(_typeLoc, type);
 	glUniform2fv(_centerLoc, 3, center);
 	glUniform1fv(_frequencyLoc, 3, frequency);
 	glUniform1fv(_amplitudeLoc, 3, amplitude);
 	glUniform3fv(_lightDirLoc, 1, lightDir);
-	glUniform2fv(_islandLoc, 1, island);
+	glUniform2fv(_islandLoc, 2, island);
 	glUniform3fv(_cameraPosLoc, 1, cameraPos);
 	glUniform1f(_tLoc, t);
 }

@@ -9,8 +9,7 @@ public:
 	WaterSimulator(int w, int h);
 
 	GLuint textureId() { return _textureId; }
-	void update(float t);
-	void draw(float t, int type);
+	void update(float t, int type);
 	int loadShader(char* filename, std::string& text);
 
 public:
